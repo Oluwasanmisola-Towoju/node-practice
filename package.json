@@ -5,7 +5,8 @@
   "main": "add.js",
   "scripts": {
     "start": "nodemon add.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "seed:movies": "node prisma/seed.js"
   },
   "keywords": [],
   "author": "",
