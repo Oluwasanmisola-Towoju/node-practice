@@ -49,7 +49,7 @@ export const authMiddleware = async (req, res, next) => {
         return res
         .status(401)
         .json({
-            error: "Not suthorized, token failed"
+            error: "Not authorized, token failed"
         });
     }
 };

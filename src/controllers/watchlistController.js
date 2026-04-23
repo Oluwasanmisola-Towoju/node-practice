@@ -95,4 +95,64 @@ const removeFromWatchlist = async (req, res) => {
     });
 }
 
-export { addToWatchlist, removeFromWatchlist };
+const updateWatchlistItem = async (req, res) => {
+    const { status, rating, notes } = req.body; 
+
+    // Find watchlist Item and verify ownership
+    const watchlistItem = await prisma.watchlistItem.findUnique({
+        where: {
+            id: req.params.id
+        }
+    });
+
+    if (!watchlistItem) {
+        return res
+        .status(404) 
+        .json({
+            error: "Watchlist item not found"
+        });
+    }
+
+    // Ensure only owner can update
+    if (watchlistItem.userId !== req.user.id) {
+        return res
+        .status(403)
+        .json({
+            error: "Not allowed to update this watchlist item"
+        });
+    } 
+
+    // Build update data
+    const updateData = {};
+
+    if (status !== undefined) {
+        updateData.status = status.toUpperCase();
+    }
+
+    if (rating !== undefined) {
+        updateData.rating = parseInt(rating);
+    }
+
+    if (notes !== undefined) {
+        updateData.notes = notes;
+    }
+
+    // Update watchlist item
+    const updateItem = await prisma.watchlistItem.update({
+        where: {
+            id: req.params.id
+        },
+        data: updateData
+    });
+
+    res
+    .status(200)
+    .json({
+        status: "success",
+        data: {
+            watchlistItem: updateItem
+        }
+    });
+}
+
+export { addToWatchlist, removeFromWatchlist, updateWatchlistItem };
